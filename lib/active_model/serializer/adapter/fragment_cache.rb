@@ -61,7 +61,8 @@ module ActiveModel
           Object.const_set non_cached, Class.new(ActiveModel::Serializer) unless Object.const_defined?(non_cached)
 
           klass._cache_options       ||= {}
-          klass._cache_options[:key] = klass._cache_key if klass._cache_key
+          klass._cache_options[:key] = serializer.instance_exec &klass._cache_key if klass._cache_key && klass._cache_key.is_a?(Proc)
+          klass._cache_options[:key] = klass._cache_key if klass._cache_key && !klass._cache_key.is_a?(Proc)
 
           cached.constantize.cache(klass._cache_options)
 
